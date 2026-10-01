@@ -22,10 +22,14 @@ t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
 fbq('init', '1644371880548801');
+fbq('init', '4654332701455111');
 fbq('track', 'PageView');
 </script>
 <noscript><img height="1" width="1" style="display:none"
 src="https://www.facebook.com/tr?id=1644371880548801&ev=PageView&noscript=1"
+/></noscript>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=4654332701455111&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
 <style>
@@ -433,20 +437,22 @@ src="https://www.facebook.com/tr?id=1644371880548801&ev=PageView&noscript=1"
     return match ? match[2] : null;
   }
 
-  function attachLeadTracking(elementId, eventName, isCustom) {
+  function attachLeadTracking(elementId, eventName, isCustom, pixelIds) {
     const el = document.getElementById(elementId);
     if (!el) return;
 
     el.addEventListener('click', function () {
       const eventId = eventName + '-' + Date.now() + '-' + Math.random().toString(36).slice(2);
 
-      // Dispara no navegador (Meta Pixel)
+      // Dispara no navegador (Meta Pixel) — só nos pixels listados em pixelIds
       if (typeof fbq === 'function') {
-        if (isCustom) {
-          fbq('trackCustom', eventName, {}, { eventID: eventId });
-        } else {
-          fbq('track', eventName, {}, { eventID: eventId });
-        }
+        pixelIds.forEach(function (pixelId) {
+          if (isCustom) {
+            fbq('trackSingleCustom', pixelId, eventName, {}, { eventID: eventId });
+          } else {
+            fbq('trackSingle', pixelId, eventName, {}, { eventID: eventId });
+          }
+        });
       }
 
       // Dispara no servidor (API de Conversões), sem travar o clique do usuário
@@ -467,14 +473,14 @@ src="https://www.facebook.com/tr?id=1644371880548801&ev=PageView&noscript=1"
     });
   }
 
-  // Botão do grupo geral
-  attachLeadTracking('whatsapp-cta', 'Lead', false);
+  // Botão do grupo geral — só Pixel antigo
+  attachLeadTracking('whatsapp-cta', 'Lead', false, ['1644371880548801']);
 
-  // Botão do grupo Pet (evento próprio, separado do geral)
-  attachLeadTracking('whatsapp-cta-pet', 'Lead_GrupoPet', true);
+  // Botão do grupo Pet — só Pixel antigo
+  attachLeadTracking('whatsapp-cta-pet', 'Lead_GrupoPet', true, ['1644371880548801']);
 
-  // Botão do grupo PokeInfoShiny (evento próprio)
-  attachLeadTracking('whatsapp-cta-poke', 'Lead_PokeInfoShiny', true);
+  // Botão do grupo PokeInfoShiny — Pixel antigo + Pixel novo da campanha
+  attachLeadTracking('whatsapp-cta-poke', 'Lead_PokeInfoShiny', true, ['1644371880548801', '4654332701455111']);
 </script>
 
 </body>
